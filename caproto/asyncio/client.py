@@ -18,6 +18,7 @@ import socket
 import threading
 import time
 import weakref
+import traceback
 
 import caproto as ca
 
@@ -1218,6 +1219,9 @@ class VirtualCircuitManager:
                     self.log.debug('Command queue loop exiting')
                     break
             except asyncio.CancelledError:
+                break
+            except RuntimeError as e:
+                self.log.exception(f'Probably an asyncio error: {e}. Traceback: {traceback.format_exc()}')
                 break
             except Exception:
                 self.log.exception('Circuit command evaluation failed: %r',
